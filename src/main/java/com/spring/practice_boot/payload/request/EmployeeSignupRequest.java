@@ -1,4 +1,4 @@
-package com.spring.practice_boot.model;
+package com.spring.practice_boot.payload.request;
 
 public class EmployeeSignupRequest {
     private String name;

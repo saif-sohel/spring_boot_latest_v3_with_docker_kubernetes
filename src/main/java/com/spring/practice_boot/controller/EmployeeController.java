@@ -1,7 +1,7 @@
 package com.spring.practice_boot.controller;
 
 import com.spring.practice_boot.model.Employee;
-import com.spring.practice_boot.model.EmployeeSignupRequest;
+import com.spring.practice_boot.payload.request.EmployeeSignupRequest;
 import com.spring.practice_boot.payload.response.MessageResponse;
 import com.spring.practice_boot.repository.EmployeeRepository;
 import com.spring.practice_boot.security.jwt.JwtUtils;

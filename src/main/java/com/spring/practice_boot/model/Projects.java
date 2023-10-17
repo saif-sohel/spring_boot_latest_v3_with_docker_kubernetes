@@ -48,6 +48,13 @@ public class Projects {
         this.developers = developers;
     }
 
+    public Projects(String name, String description, Date startDate, String duration, String locale) {
+        this.name = name;
+        this.duration = Integer.parseInt(duration);
+        this.locale = locale;
+        this.startDate = startDate;
+    }
+
     public long getId() {
         return id;
     }
