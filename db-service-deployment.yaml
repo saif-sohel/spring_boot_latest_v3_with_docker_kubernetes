@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\Users\BJIT\AppData\Local\Microsoft\WinGet\Packages\Kubernetes.kompose_Microsoft.Winget.Source_8wekyb3d8bbwe\kompose.exe convert
+    kompose.version: 1.31.2 (a92241f79)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: db-service
+  name: db-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: db-service
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\Users\BJIT\AppData\Local\Microsoft\WinGet\Packages\Kubernetes.kompose_Microsoft.Winget.Source_8wekyb3d8bbwe\kompose.exe convert
+        kompose.version: 1.31.2 (a92241f79)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/practice-boot-api-network: "true"
+        io.kompose.service: db-service
+    spec:
+      containers:
+        - args:
+            - --default-authentication-plugin=mysql_native_password
+          env:
+            - name: MYSQL_DATABASE
+              value: practice_spring_boot
+            - name: MYSQL_PASSWORD
+              value: "123456"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123456"
+            - name: MYSQL_USER
+              value: saiful_sohel
+            - name: SERVICE_NAME
+              value: mariadb-service
+            - name: SERVICE_TAGS
+              value: dev
+          image: mariadb:10.10.5
+          name: mariadb-service-container
+          ports:
+            - containerPort: 3306
+              hostPort: 3306
+              protocol: TCP
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: db-service-claim0
+      restartPolicy: Always
+      volumes:
+        - name: db-service-claim0
+          persistentVolumeClaim:
+            claimName: db-service-claim0
+status: {}

@@ -75,16 +75,16 @@ public class ProjectController {
 
     @RolesAllowed("ROLE_ADMIN")
     @PostMapping("/assign-manager")
-    public ResponseEntity<?> assignManagerToProject(@Valid @RequestBody AddProjectManagerRequest addDevelopersRequest) {
+    public ResponseEntity<?> assignManagerToProject(@Valid @RequestBody AddProjectManagerRequest addProjectManagerRequest) {
 
-        if(!projectRepository.existsById(Long.parseLong(addDevelopersRequest.getProjectId()))) {
+        if(!projectRepository.existsById(Long.parseLong(addProjectManagerRequest.getProjectId()))) {
             return ResponseEntity.badRequest().body("This Project does not exist");
         }
-        Projects project = projectRepository.findById(Long.parseLong(addDevelopersRequest.getProjectId()));
-        Employee manager = employeeRepository.findById(Long.parseLong(addDevelopersRequest.getProjectManagerId()));
-        if (manager == null) {
-            return ResponseEntity.badRequest().body("Manager with id " + addDevelopersRequest.getProjectManagerId() + " does not exist");
+        if (employeeRepository.existsById(Long.parseLong(addProjectManagerRequest.getProjectManagerId()))) {
+            return ResponseEntity.badRequest().body("Manager with id " + addProjectManagerRequest.getProjectManagerId() + " does not exist");
         }
+        Projects project = projectRepository.findById(Long.parseLong(addProjectManagerRequest.getProjectId()));
+        Employee manager = employeeRepository.findById(Long.parseLong(addProjectManagerRequest.getProjectManagerId()));
         project.setProjectManager(manager);
         projectRepository.save(project);
         return ResponseEntity.ok("Manager assigned successfully");

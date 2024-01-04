@@ -14,11 +14,9 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -48,7 +46,7 @@ public class JwtUtils {
         }
     }
 
-    public ResponseCookie generateJwtCookie(EmployeeDetailsImpl employeeDetails) throws UnsupportedEncodingException {
+    public ResponseCookie generateJwtCookie(EmployeeDetailsImpl employeeDetails) {
         String jwt = generateTokenFromUsername(employeeDetails.getUsername());
         return ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
     }
@@ -60,13 +58,17 @@ public class JwtUtils {
 
     public String getUserNameFromJwtToken(String token)
     {
-        return Jwts.parser().setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8)).build().
+        byte[] apiKeySecretBytes = jwtSecret.getBytes();
+        SecretKey signingKey = new SecretKeySpec(apiKeySecretBytes, "HmacSHA256");
+        return Jwts.parser().verifyWith(signingKey).build().
                 parseSignedClaims(token).getPayload().getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jws<Claims> jwt = Jwts.parser().setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8)).build().parseSignedClaims(authToken);
+            byte[] apiKeySecretBytes = jwtSecret.getBytes();
+            SecretKey signingKey = new SecretKeySpec(apiKeySecretBytes, "HmacSHA256");
+            Jwts.parser().verifyWith(signingKey).build().parseSignedClaims(authToken);
             return true;
         } catch (SignatureException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());
@@ -83,13 +85,13 @@ public class JwtUtils {
         return false;
     }
 
-    public String generateTokenFromUsername(String username) throws UnsupportedEncodingException {
+    public String generateTokenFromUsername(String username) {
 
+        byte[] apiKeySecretBytes = jwtSecret.getBytes();
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, "HmacSHA256");
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(new Date().getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes(StandardCharsets.UTF_8))
-                .compact();
+                .expiration(new Date(new Date().getTime() + jwtExpirationMs)).signWith(signingKey).compact();
     }
 }
