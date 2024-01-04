@@ -29,7 +29,8 @@
 
 A simple REST API implemented using latest Spring Boot 3. This project aims to showcase the power of Spring Boot's Security,
 Spring JPA, Hibernate ORM framework, Spring JDBC and the Spring IoC container as well as the major changes in Spring Boot 3. This project uses MariaDB (a fork of MySQL) 
-for it's database server. Basic CRUD operations can be done using exposed REST API endpoints after the project is compiled and run on the integrated server. This project also implements Java JWT for both authentication and authorization purposes.
+for its database server. Basic CRUD operations can be done using exposed REST API endpoints after the project is compiled and run on the integrated server. This project also implements Java JWT for both authentication and authorization purposes.
+The project can be deployed in a docker container or a kubernetes cluster. Docker deployment files and Kubernetes deployment files are included in the project.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -44,6 +45,8 @@ This project uses following libraries/frameworks.
 * [![MariaDB][mariadb-badge]][mariadb-url]
 * [![Hibernate][hibernate-badge]][hibernate-url]
 * [![Maven][maven-badge]][maven-url]
+* [![Docker][docker-badge]][docker-url]
+* [![Kubernetes][kubernetes-badge]][kubernetes-url]
 
 ## Getting Started
 
@@ -68,6 +71,34 @@ This project uses libraries mentioned above and Maven as the build tool. Make su
    ```sh
    java /target/classes/PracticeBootApplication
    ```
+   
+### Docker
+Docker deployment files are included in the project. You can deploy the project in a docker container using the docker-compose files.
+1. Build the docker images using docker-compose.
+   ```sh
+   docker-compose -f docker-compose.yml build
+   ```
+2. Run the docker images using docker-compose.
+   ```sh
+    docker-compose -f docker-compose.yml up
+    ```
+### Kubernetes
+Kubernetes deployment files are also included in the project. You can deploy the project in a kubernetes cluster using the deployment files.
+
+1. Use MiniKube to create a local kubernetes cluster.
+   ```sh
+   minikube start
+   ```
+2. Deploy the project in the cluster using kubectl.
+   ```sh
+    kubectl apply -f deployment.yml
+    ```
+3. MiniKube dashboard can be used to view the deployed project.
+   ```sh
+    minikube dashboard
+    ```
+   
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -104,4 +135,7 @@ Github: https://github.com/saif-sohel
 [hibernate-url]:https://hibernate.org/orm/
 [maven-badge]:https://img.shields.io/badge/apache_maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white
 [maven-url]:https://maven.apache.org/
-
+[docker-badge]:https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white
+[docker-url]:https://www.docker.com/
+[kubernetes-badge]:https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white
+[kubernetes-url]:https://kubernetes.io/
