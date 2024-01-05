@@ -91,7 +91,7 @@ Kubernetes deployment files are also included in the project. You can deploy the
    ```
 2. Deploy the project in the cluster using kubectl.
    ```sh
-    kubectl apply -f deployment.yml
+    kubectl apply -f <kuberenetes configs names separated by comma>
     ```
 3. MiniKube dashboard can be used to view the deployed project.
    ```sh
