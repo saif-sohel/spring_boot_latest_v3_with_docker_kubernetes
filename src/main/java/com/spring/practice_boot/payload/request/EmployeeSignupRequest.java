@@ -6,16 +6,20 @@ public class EmployeeSignupRequest {
     private String password;
     private String phone;
     private String role;
+    private String address;
+    private String joiningDate;
 
     public EmployeeSignupRequest() {
     }
 
-    public EmployeeSignupRequest(String name, String username, String password, String phone, String role) {
+    public EmployeeSignupRequest(String name, String username, String password, String phone, String role, String address, String joiningDate) {
         this.name = name;
         this.username = username;
         this.password = password;
         this.phone = phone;
         this.role = role;
+        this.address = address;
+        this.joiningDate = joiningDate;
     }
 
     public String getName() {
@@ -56,5 +60,18 @@ public class EmployeeSignupRequest {
 
     public void setRole(String role) {
         this.role = role;
+    }
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getJoiningDate() {
+        return joiningDate;
+    }
+    public void setJoiningDate(String joiningDate) {
+        this.joiningDate = joiningDate;
     }
 }

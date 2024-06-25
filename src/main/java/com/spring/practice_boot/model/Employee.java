@@ -2,6 +2,7 @@ package com.spring.practice_boot.model;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
 
 
 @Entity
@@ -27,17 +28,25 @@ public class Employee {
     @Column(name="role")
     private String role;
 
+    @Column(name="address")
+    private String address;
+
+    @Column(name = "joining_date")
+    private Date joiningDate;
+
 
 
     public Employee() {
     }
 
-    public Employee(String name, String phone, String userName, String password, String role) {
+    public Employee(String name, String phone, String userName, String password, String role, String address, Date joiningDate) {
         this.name = name;
         this.phone = phone;
         this.userName = userName;
         this.password = password;
         this.role = role;
+        this.address = address;
+        this.joiningDate = joiningDate;
     }
 
     public Employee(long id, String name, String phone, String userName, String password, String role) {
@@ -95,5 +104,19 @@ public class Employee {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public String getAddress() {
+        return address;
+    }
+
+    public Date getJoiningDate() {
+        return joiningDate;
+    }
+    public void setJoiningDate(Date joiningDate) {
+        this.joiningDate = joiningDate;
     }
 }

@@ -46,14 +46,14 @@ public class JwtUtils {
         }
     }
 
-    public ResponseCookie generateJwtCookie(EmployeeDetailsImpl employeeDetails) {
+    public ResponseCookie generateJwtCookie(EmployeeDetailsImpl employeeDetails, boolean isLocalHost) {
         String jwt = generateTokenFromUsername(employeeDetails.getUsername());
-        return ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
+         return isLocalHost ? ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(24 * 60 * 60).httpOnly(true).build() : ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(24 * 60 * 60).httpOnly(true).sameSite("None").secure(true).build();
     }
 
     public ResponseCookie getCleanJwtCookie()
     {
-        return ResponseCookie.from(jwtCookie, "").path("/api").build();
+        return ResponseCookie.from(jwtCookie, "").path("/").build();
     }
 
     public String getUserNameFromJwtToken(String token)

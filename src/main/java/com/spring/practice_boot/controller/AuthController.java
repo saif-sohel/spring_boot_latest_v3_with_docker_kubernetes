@@ -16,10 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
@@ -28,8 +25,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController
-{
+@CrossOrigin(origins = {"http://localhost:5173", "https://employee-info-5r9f.onrender.com"}, maxAge = 3600, allowCredentials = "true", allowedHeaders = "*")
+public class AuthController {
     AuthenticationManager authenticationManager;
 
     EmployeeRepository employeeRepository;
@@ -56,7 +53,7 @@ public class AuthController
 
         EmployeeDetailsImpl employeeDetails = (EmployeeDetailsImpl) authentication.getPrincipal();
 
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(employeeDetails);
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(employeeDetails, true);
 
         String jwtToken = jwtCookie.toString().split(";")[0];
         jwtToken = jwtToken.split("=")[1];
@@ -64,7 +61,9 @@ public class AuthController
         List<String> roles = employeeDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Set-Cookie")
                 .body(new UserInfoResponse(employeeDetails.getId(),
                         employeeDetails.getName(),
                         employeeDetails.getUsername(),
@@ -73,12 +72,18 @@ public class AuthController
                         jwtToken));
     }
 
-    @PostMapping("/signout")
-    public ResponseEntity<?> logoutUser()
-    {
+    @GetMapping("/signout")
+    public ResponseEntity<?> logoutUser() {
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new MessageResponse("You've been signed out!"));
+    }
+
+
+    @GetMapping("/test")
+    public String test(@RequestHeader("Origin") String origin) {
+        System.out.println("Origin: " + origin);
+        return "Origin: " + origin;
     }
 
 }
