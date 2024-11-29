@@ -33,31 +33,25 @@ public class JwtUtils {
     @Value("${springjwt.app.jwtCookieName}")
     private String jwtCookie;
 
+    @Value("${springjwt.app.isLocalHost}")
+    private String isLocalHost;
 
-    public String getJwtFromCookies(HttpServletRequest request)
-    {
+
+    public String getJwtFromCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-        if (cookie != null)
-        {
-            return cookie.getValue();
-        } else
-        {
-            return null;
-        }
+        return cookie != null ? cookie.getValue() : null;
     }
 
-    public ResponseCookie generateJwtCookie(EmployeeDetailsImpl employeeDetails, boolean isLocalHost) {
+    public ResponseCookie generateJwtCookie(EmployeeDetailsImpl employeeDetails) {
         String jwt = generateTokenFromUsername(employeeDetails.getUsername());
-         return isLocalHost ? ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(24 * 60 * 60).httpOnly(true).build() : ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(24 * 60 * 60).httpOnly(true).sameSite("None").secure(true).build();
+        return Boolean.parseBoolean(isLocalHost) ? ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(24 * 60 * 60).httpOnly(true).build() : ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(24 * 60 * 60).httpOnly(true).sameSite("None").secure(true).build();
     }
 
-    public ResponseCookie getCleanJwtCookie()
-    {
-        return ResponseCookie.from(jwtCookie, "").path("/").build();
+    public ResponseCookie getCleanJwtCookie() {
+        return Boolean.parseBoolean(isLocalHost) ? ResponseCookie.from(jwtCookie, "").path("/").maxAge(0).httpOnly(true).build() : ResponseCookie.from(jwtCookie, "").path("/").maxAge(0).httpOnly(true).sameSite("None").secure(true).build();
     }
 
-    public String getUserNameFromJwtToken(String token)
-    {
+    public String getUserNameFromJwtToken(String token) {
         byte[] apiKeySecretBytes = jwtSecret.getBytes();
         SecretKey signingKey = new SecretKeySpec(apiKeySecretBytes, "HmacSHA256");
         return Jwts.parser().verifyWith(signingKey).build().

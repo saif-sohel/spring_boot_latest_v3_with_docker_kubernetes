@@ -1,0 +1,20 @@
+services:
+  api-service:
+    container_name: spring-boot-service-container
+    image: spring_boot_employee:v1
+    restart: always
+    ports:
+      - "8443:8443"
+    environment:
+      DB_URL: jdbc:postgresql://psql-azure.postgres.database.azure.com:5432/spring_boot_practice
+      DB_USERNAME: saif_sohel
+      DB_PASSWORD: kpG.4E8!LX7hS7b
+      CROSS_ORIGIN_URL:
+      SERVICE_TAGS: dev
+      SERVICE_NAME: spring_boot_service
+    networks:
+      - api-network
+
+networks:
+  api-network:
+    driver: bridge

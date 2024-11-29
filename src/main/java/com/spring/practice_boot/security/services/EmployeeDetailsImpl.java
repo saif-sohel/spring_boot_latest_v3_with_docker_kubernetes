@@ -27,7 +27,7 @@ public class EmployeeDetailsImpl implements UserDetails
     private String phone;
 
 
-    private Collection<? extends GrantedAuthority> authority;
+    private final Collection<? extends GrantedAuthority> authority;
 
     public EmployeeDetailsImpl(long id, String name, String username, String password, String phone, Collection<? extends GrantedAuthority> authority) {
         this.id = id;

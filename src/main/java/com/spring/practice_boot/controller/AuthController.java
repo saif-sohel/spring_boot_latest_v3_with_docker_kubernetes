@@ -53,7 +53,7 @@ public class AuthController {
 
         EmployeeDetailsImpl employeeDetails = (EmployeeDetailsImpl) authentication.getPrincipal();
 
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(employeeDetails, true);
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(employeeDetails);
 
         String jwtToken = jwtCookie.toString().split(";")[0];
         jwtToken = jwtToken.split("=")[1];

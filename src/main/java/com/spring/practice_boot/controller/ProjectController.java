@@ -31,7 +31,7 @@ public class ProjectController {
         this.employeeRepository = employeeRepository;
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @PostMapping("/create")
     public ResponseEntity<?> createProject(@Valid @RequestBody CreateProjectRequest createProjectRequest) {
         if(projectRepository.existsByName(createProjectRequest.getName())) {
@@ -50,7 +50,7 @@ public class ProjectController {
         return ResponseEntity.ok("Project created successfully");
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @PostMapping("/add-developer")
     public ResponseEntity<?> addDeveloperToProject(@Valid @RequestBody AddDevelopersRequest addDevelopersRequest) {
 
@@ -73,7 +73,7 @@ public class ProjectController {
         return ResponseEntity.ok("Developer added successfully");
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @PostMapping("/assign-manager")
     public ResponseEntity<?> assignManagerToProject(@Valid @RequestBody AddProjectManagerRequest addProjectManagerRequest) {
 
@@ -90,26 +90,26 @@ public class ProjectController {
         return ResponseEntity.ok("Manager assigned successfully");
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @GetMapping("/fetch_all")
     public ResponseEntity<?> getAllProjects() {
         return ResponseEntity.ok(projectRepository.findAll());
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getProject(@PathVariable String id) {
         Projects project = projectRepository.findById(Long.parseLong(id));
         return ResponseEntity.ok(project);
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @GetMapping("/get_by_manager/{id}")
     public ResponseEntity<?> getProjectByManager(@PathVariable String id) {
         return ResponseEntity.ok(projectRepository.findByProjectManagerId(Long.parseLong(id)));
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @GetMapping("/delete/{id}")
     public ResponseEntity<?> deleteProject(@PathVariable String id) {
         projectRepository.deleteById(Long.parseLong(id));

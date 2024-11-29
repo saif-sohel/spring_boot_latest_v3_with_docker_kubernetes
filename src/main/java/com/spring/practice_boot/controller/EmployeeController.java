@@ -23,10 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-@EnableGlobalMethodSecurity(jsr250Enabled = true)
 @RestController
 @RequestMapping("/api/employee")
-@CrossOrigin(origins = {"http://localhost:5173", "https://employee-info-5r9f.onrender.com"}, maxAge = 3600, allowCredentials = "true", allowedHeaders = "*")
 public class EmployeeController {
 
     EmployeeRepository employeeRepository;
@@ -40,7 +38,7 @@ public class EmployeeController {
         this.jwtUtils = jwtUtils;
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @PostMapping("/signup")
     public ResponseEntity<?> registerEmployee(@Valid @RequestBody EmployeeSignupRequest employeeSignupRequest)
     {
@@ -58,12 +56,12 @@ public class EmployeeController {
         Matcher matcher = Pattern.compile("^[a-zA-Z0-9._@]+$").matcher(employeeSignupRequest.getUsername());
 
         if(!matcher.matches()) {
-            return ResponseEntity.badRequest().body("Invalid username. Only Alphanumeric and \"@, ., _\" characters are allowed");
+            return ResponseEntity.badRequest().body("Invalid username/email. Only Alphanumeric and \"@, ., _\" characters are allowed.");
         }
 
 
         Date joiningDate;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         try {
             joiningDate = formatter.parse(employeeSignupRequest.getJoiningDate());
         } catch (Exception e) {
@@ -79,38 +77,44 @@ public class EmployeeController {
         return ResponseEntity.ok(new MessageResponse("Employee registered successfully!"));
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @GetMapping("/fetch_all")
     public ResponseEntity<?> getAllEmployee() {
         List<Employee> employees = employeeRepository.findAll();
         List<UserInfoBatchResponse> userInfoBatchResponses = new ArrayList<>();
         employees.forEach(employee -> {
-            Map<String, String> address = new HashMap<>();
-            address.put("city", employee.getAddress().split(";")[0]);
-            address.put("country", employee.getAddress().split(";")[1]);
-            address.put("country_code", employee.getAddress().split(";")[2]);
-            userInfoBatchResponses.add(new UserInfoBatchResponse(employee.getId(), employee.getName(), employee.getUserName(), employee.getPhone(), employee.getRole(), address));
+            if(!"ROLE_ADMIN".equals(employee.getRole())) {
+                Map<String, String> address = new HashMap<>();
+                address.put("city", employee.getAddress().split(";")[0]);
+                address.put("country", employee.getAddress().split(";")[1]);
+                address.put("country_code", employee.getAddress().split(";")[2]);
+                userInfoBatchResponses.add(new UserInfoBatchResponse(employee.getId() + 1000, employee.getName(), employee.getUserName(), employee.getPhone(), employee.getRole(), address));
+            }
         });
-        System.out.println(userInfoBatchResponses);
+        userInfoBatchResponses.sort(Comparator.comparing(UserInfoBatchResponse::getId));
+
         return new ResponseEntity<>(userInfoBatchResponses, HttpStatus.OK);
     }
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed({"ADMIN", "EMPLOYEE"})
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getEmployee(@PathVariable String id) {
-        Employee employee = employeeRepository.findById(Long.parseLong(id));
-        return new ResponseEntity<>(employee, HttpStatus.OK);
+        if (employeeRepository.existsById(Long.parseLong(id))) {
+            Employee employee = employeeRepository.findById(Long.parseLong(id));
+            return new ResponseEntity<>(employee, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
     }
 
 
-    @RolesAllowed("ROLE_ADMIN")
+    @RolesAllowed("ADMIN")
     @GetMapping("/delete/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable String id) {
-        employeeRepository.deleteById(Long.parseLong(id));
-        return new ResponseEntity<>("Deleted Successfully", HttpStatus.OK);
+        if (!employeeRepository.existsById(Long.parseLong(id))) {
+            employeeRepository.deleteById(Long.parseLong(id));
+            return new ResponseEntity<>("Deleted Successfully", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
     }
-
-
-
 
 }
