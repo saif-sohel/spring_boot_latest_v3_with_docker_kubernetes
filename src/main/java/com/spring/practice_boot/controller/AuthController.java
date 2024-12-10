@@ -25,7 +25,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = {"http://localhost:5173", "https://employee-info-5r9f.onrender.com"}, maxAge = 3600, allowCredentials = "true", allowedHeaders = "*")
 public class AuthController {
     AuthenticationManager authenticationManager;
 
