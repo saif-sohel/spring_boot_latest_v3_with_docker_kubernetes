@@ -1,6 +1,6 @@
 package com.spring.practice_boot.security;
 
-import com.spring.practice_boot.security.jwt.AuthEntryPointJwt;
+import com.spring.practice_boot.security.jwt.AuthEntryPoint;
 import com.spring.practice_boot.security.jwt.AuthTokenFilter;
 import com.spring.practice_boot.security.services.EmployeeDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +27,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class WebSecurityConfig {
 
     private final EmployeeDetailsServiceImpl employeeDetailsService;
-    private final AuthEntryPointJwt unauthorizedHandler;
+    private final AuthEntryPoint unauthorizedHandler;
 
     @Autowired
-    public WebSecurityConfig(EmployeeDetailsServiceImpl employeeDetailsService, AuthEntryPointJwt unauthorizedHandler) {
+    public WebSecurityConfig(EmployeeDetailsServiceImpl employeeDetailsService, AuthEntryPoint unauthorizedHandler) {
         this.employeeDetailsService = employeeDetailsService;
         this.unauthorizedHandler = unauthorizedHandler;
     }
