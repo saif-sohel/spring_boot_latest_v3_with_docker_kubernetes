@@ -20,16 +20,18 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    public static final String AUTHORIZATION_PREFIX = "Bearer ";
     AuthenticationManager authenticationManager;
-    
+
     EmployeeRepository employeeRepository;
+
     PasswordEncoder encoder;
+
     JwtUtils jwtUtils;
 
     @Autowired
@@ -50,23 +52,30 @@ public class AuthController {
 
         EmployeeDetailsImpl employeeDetails = (EmployeeDetailsImpl) authentication.getPrincipal();
 
-        String jwtToken = jwtUtils.generateTokenFromUsername(employeeDetails.getUsername());
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(employeeDetails);
+
+        String jwtToken = jwtCookie.toString().split(";")[0];
+        jwtToken = jwtToken.split("=")[1];
 
         List<String> roles = employeeDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, AUTHORIZATION_PREFIX + jwtToken)
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Set-Cookie")
                 .body(new UserInfoResponse(employeeDetails.getId(),
                         employeeDetails.getName(),
                         employeeDetails.getUsername(),
                         employeeDetails.getPhone(),
-                        roles,
+                        roles.get(0),
                         jwtToken));
     }
+
     @GetMapping("/signout")
     public ResponseEntity<?> logoutUser() {
-        return ResponseEntity.ok(new MessageResponse("You've been signed out!"));
+        ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new MessageResponse("You've been signed out!"));
     }
 
 

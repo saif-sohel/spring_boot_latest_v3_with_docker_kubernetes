@@ -37,7 +37,7 @@ public class AuthTokenFilter extends OncePerRequestFilter
     {
         try
         {
-            String jwt = jwtUtils.getJwtFromAuthorizationHeader(request);
+            String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt))
             {
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);
@@ -61,4 +61,8 @@ public class AuthTokenFilter extends OncePerRequestFilter
         filterChain.doFilter(request, response);
     }
 
+    private String parseJwt(HttpServletRequest request)
+    {
+        return jwtUtils.getJwtFromCookies(request);
+    }
 }
